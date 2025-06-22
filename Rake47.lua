@@ -4,7 +4,6 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Utility function to add rounded corners
 local function roundify(uiElement, radius)
 	local corner = Instance.new("UICorner")
 	corner.CornerRadius = UDim.new(0, radius or 8)
@@ -64,7 +63,6 @@ local inputConnection
 local labelRefs = {}
 local activeChangeButtons = {}
 
--- UI Setup
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "RemoteControlUI"
 screenGui.ResetOnSpawn = false
