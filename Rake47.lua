@@ -13,48 +13,12 @@ local function roundify(uiElement, radius)
 end
 
 local remotes = {
-	{
-		name = "Door",
-		key = Enum.KeyCode.C,
-		path = workspace:WaitForChild("Map"):WaitForChild("SafeHouse"):WaitForChild("Door"):WaitForChild("RemoteEvent"),
-		args = { "Door" },
-		enabled = true
-	},
-	{
-		name = "Light (SafeHouse)",
-		key = Enum.KeyCode.V,
-		path = workspace:WaitForChild("Map"):WaitForChild("SafeHouse"):WaitForChild("Door"):WaitForChild("RemoteEvent"),
-		args = { "Light" },
-		enabled = true
-	},
-	{
-		name = "Door (Obs)",
-		key = Enum.KeyCode.X,
-		path = workspace:WaitForChild("Map"):WaitForChild("ObservationTower"):WaitForChild("Lights"):WaitForChild("RemoteEvent"),
-		args = { "Door", true },
-		enabled = true
-	},
-	{
-		name = "Door2 (Obs)",
-		key = Enum.KeyCode.N,
-		path = workspace:WaitForChild("Map"):WaitForChild("ObservationTower"):WaitForChild("Lights"):WaitForChild("RemoteEvent"),
-		args = { "Door2" },
-		enabled = true
-	},
-	{
-		name = "Radar (Obs)",
-		key = Enum.KeyCode.M,
-		path = workspace:WaitForChild("Map"):WaitForChild("ObservationTower"):WaitForChild("Lights"):WaitForChild("RemoteEvent"),
-		args = { "Radar" },
-		enabled = true
-	},
-	{
-		name = "Light (Obs)",
-		key = Enum.KeyCode.B,
-		path = workspace:WaitForChild("Map"):WaitForChild("ObservationTower"):WaitForChild("Lights"):WaitForChild("RemoteEvent"),
-		args = { "Light" },
-		enabled = true
-	}
+	{name = "Door", key = Enum.KeyCode.C, path = workspace:WaitForChild("Map"):WaitForChild("SafeHouse"):WaitForChild("Door"):WaitForChild("RemoteEvent"), args = {"Door"}, enabled = true},
+	{name = "Light (SafeHouse)", key = Enum.KeyCode.V, path = workspace:WaitForChild("Map"):WaitForChild("SafeHouse"):WaitForChild("Door"):WaitForChild("RemoteEvent"), args = {"Light"}, enabled = true},
+	{name = "Door (Obs)", key = Enum.KeyCode.X, path = workspace:WaitForChild("Map"):WaitForChild("ObservationTower"):WaitForChild("Lights"):WaitForChild("RemoteEvent"), args = {"Door", true}, enabled = true},
+	{name = "Door2 (Obs)", key = Enum.KeyCode.N, path = workspace:WaitForChild("Map"):WaitForChild("ObservationTower"):WaitForChild("Lights"):WaitForChild("RemoteEvent"), args = {"Door2"}, enabled = true},
+	{name = "Radar (Obs)", key = Enum.KeyCode.M, path = workspace:WaitForChild("Map"):WaitForChild("ObservationTower"):WaitForChild("Lights"):WaitForChild("RemoteEvent"), args = {"Radar"}, enabled = true},
+	{name = "Light (Obs)", key = Enum.KeyCode.B, path = workspace:WaitForChild("Map"):WaitForChild("ObservationTower"):WaitForChild("Lights"):WaitForChild("RemoteEvent"), args = {"Light"}, enabled = true}
 }
 
 local openKey = Enum.KeyCode.RightControl
@@ -74,7 +38,7 @@ screenGui.DisplayOrder = 1000
 screenGui.Parent = playerGui
 
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = isMobile and UDim2.new(0, 200, 0, 270) or UDim2.new(0, 440, 0, 380)
+mainFrame.Size = isMobile and UDim2.new(0, 200, 0, 180) or UDim2.new(0, 440, 0, 380)
 mainFrame.Position = isMobile and UDim2.new(0, 10, 0, 100) or UDim2.new(0, 100, 0, 100)
 mainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 mainFrame.BackgroundTransparency = 0.2
@@ -158,12 +122,12 @@ overlayPrompt.ZIndex = 999
 overlayPrompt.Parent = screenGui
 
 local function createRemoteEntry(remote, index)
-	local entryHeight = isMobile and 30 or 40
-	local ySpacing = isMobile and 32 or 45
+	local entryHeight = isMobile and 24 or 40
+	local ySpacing = isMobile and 26 or 45
 
 	local entry = Instance.new("TextButton")
 	entry.Size = UDim2.new(1, -20, 0, entryHeight)
-	entry.Position = UDim2.new(0, 10, 0, (isMobile and 50 or 70) + (index - 1) * ySpacing)
+	entry.Position = UDim2.new(0, 10, 0, (isMobile and 40 or 70) + (index - 1) * ySpacing)
 	entry.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 	entry.BackgroundTransparency = 0.2
 	entry.Text = ""
@@ -179,7 +143,7 @@ local function createRemoteEntry(remote, index)
 	label.TextColor3 = Color3.new(1, 1, 1)
 	label.BackgroundTransparency = 1
 	label.Font = Enum.Font.Gotham
-	label.TextSize = isMobile and 13 or 15
+	label.TextSize = isMobile and 12 or 15
 	label.TextXAlignment = Enum.TextXAlignment.Left
 	label.ZIndex = 101
 	label.Parent = entry
