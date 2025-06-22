@@ -29,6 +29,7 @@ local inputConnection
 local labelRefs = {}
 local activeChangeButtons = {}
 local uiKeyButton
+local uiKeyLabel
 
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "RemoteControlUI"
@@ -76,7 +77,7 @@ destroyButton.Parent = mainFrame
 roundify(destroyButton, 6)
 
 if not isMobile then
-	local uiKeyLabel = Instance.new("TextLabel")
+	uiKeyLabel = Instance.new("TextLabel")
 	uiKeyLabel.Size = UDim2.new(0, 200, 0, 25)
 	uiKeyLabel.Position = UDim2.new(0, 10, 0, 35)
 	uiKeyLabel.BackgroundTransparency = 1
@@ -210,9 +211,8 @@ inputConnection = UserInputService.InputBegan:Connect(function(input, gameProces
 
 	if waitingForUIKeyChange then
 		openKey = input.KeyCode
-		local label = mainFrame:FindFirstChildWhichIsA("TextLabel")
-		if label then
-			label.Text = "UI Toggle Key: " .. openKey.Name
+		if uiKeyLabel then
+			uiKeyLabel.Text = "UI Toggle Key: " .. openKey.Name
 		end
 		if uiKeyButton then
 			uiKeyButton.Text = "Change Key"
