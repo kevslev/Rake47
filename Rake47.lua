@@ -4,6 +4,11 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
+-- Prevent duplicate execution
+if playerGui:FindFirstChild("RemoteControlUI") then
+	return
+end
+
 local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 
 local function roundify(uiElement, radius)
