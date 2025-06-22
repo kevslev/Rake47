@@ -74,7 +74,7 @@ screenGui.DisplayOrder = 1000
 screenGui.Parent = playerGui
 
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = isMobile and UDim2.new(0, 200, 0, 320) or UDim2.new(0, 440, 0, 380)
+mainFrame.Size = isMobile and UDim2.new(0, 200, 0, 270) or UDim2.new(0, 440, 0, 380)
 mainFrame.Position = isMobile and UDim2.new(0, 10, 0, 100) or UDim2.new(0, 100, 0, 100)
 mainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 mainFrame.BackgroundTransparency = 0.2
@@ -159,7 +159,7 @@ overlayPrompt.Parent = screenGui
 
 local function createRemoteEntry(remote, index)
 	local entryHeight = isMobile and 30 or 40
-	local ySpacing = isMobile and 35 or 45
+	local ySpacing = isMobile and 32 or 45
 
 	local entry = Instance.new("TextButton")
 	entry.Size = UDim2.new(1, -20, 0, entryHeight)
