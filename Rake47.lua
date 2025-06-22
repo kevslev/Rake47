@@ -28,6 +28,7 @@ local waitingForUIKeyChange = false
 local inputConnection
 local labelRefs = {}
 local activeChangeButtons = {}
+local uiKeyButton
 
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "RemoteControlUI"
@@ -87,7 +88,7 @@ if not isMobile then
 	uiKeyLabel.ZIndex = 101
 	uiKeyLabel.Parent = mainFrame
 
-	local uiKeyButton = Instance.new("TextButton")
+	uiKeyButton = Instance.new("TextButton")
 	uiKeyButton.Size = UDim2.new(0, 120, 0, 25)
 	uiKeyButton.Position = UDim2.new(1, -130, 0, 35)
 	uiKeyButton.Text = "Change Key"
@@ -212,6 +213,9 @@ inputConnection = UserInputService.InputBegan:Connect(function(input, gameProces
 		local label = mainFrame:FindFirstChildWhichIsA("TextLabel")
 		if label then
 			label.Text = "UI Toggle Key: " .. openKey.Name
+		end
+		if uiKeyButton then
+			uiKeyButton.Text = "Change Key"
 		end
 		waitingForUIKeyChange = false
 		overlayPrompt.Visible = false
