@@ -4,6 +4,10 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
+-- Detect if player is on mobile
+local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
+
+-- Utility function to add rounded corners
 local function roundify(uiElement, radius)
 	local corner = Instance.new("UICorner")
 	corner.CornerRadius = UDim.new(0, radius or 8)
@@ -63,6 +67,7 @@ local inputConnection
 local labelRefs = {}
 local activeChangeButtons = {}
 
+-- UI Setup
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "RemoteControlUI"
 screenGui.ResetOnSpawn = false
@@ -108,30 +113,40 @@ destroyButton.ZIndex = 101
 destroyButton.Parent = mainFrame
 roundify(destroyButton, 6)
 
-local uiKeyLabel = Instance.new("TextLabel")
-uiKeyLabel.Size = UDim2.new(0, 200, 0, 25)
-uiKeyLabel.Position = UDim2.new(0, 10, 0, 35)
-uiKeyLabel.BackgroundTransparency = 1
-uiKeyLabel.Text = "UI Toggle Key: " .. openKey.Name
-uiKeyLabel.TextColor3 = Color3.new(1, 1, 1)
-uiKeyLabel.Font = Enum.Font.Gotham
-uiKeyLabel.TextSize = 16
-uiKeyLabel.TextXAlignment = Enum.TextXAlignment.Left
-uiKeyLabel.ZIndex = 101
-uiKeyLabel.Parent = mainFrame
+-- Only show key toggle UI on PC
+if not isMobile then
+	local uiKeyLabel = Instance.new("TextLabel")
+	uiKeyLabel.Size = UDim2.new(0, 200, 0, 25)
+	uiKeyLabel.Position = UDim2.new(0, 10, 0, 35)
+	uiKeyLabel.BackgroundTransparency = 1
+	uiKeyLabel.Text = "UI Toggle Key: " .. openKey.Name
+	uiKeyLabel.TextColor3 = Color3.new(1, 1, 1)
+	uiKeyLabel.Font = Enum.Font.Gotham
+	uiKeyLabel.TextSize = 16
+	uiKeyLabel.TextXAlignment = Enum.TextXAlignment.Left
+	uiKeyLabel.ZIndex = 101
+	uiKeyLabel.Parent = mainFrame
 
-local uiKeyButton = Instance.new("TextButton")
-uiKeyButton.Size = UDim2.new(0, 120, 0, 25)
-uiKeyButton.Position = UDim2.new(1, -130, 0, 35)
-uiKeyButton.Text = "Change Key"
-uiKeyButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
-uiKeyButton.BackgroundTransparency = 0.2
-uiKeyButton.TextColor3 = Color3.new(1, 1, 1)
-uiKeyButton.Font = Enum.Font.GothamBold
-uiKeyButton.TextSize = 14
-uiKeyButton.ZIndex = 101
-uiKeyButton.Parent = mainFrame
-roundify(uiKeyButton, 6)
+	local uiKeyButton = Instance.new("TextButton")
+	uiKeyButton.Size = UDim2.new(0, 120, 0, 25)
+	uiKeyButton.Position = UDim2.new(1, -130, 0, 35)
+	uiKeyButton.Text = "Change Key"
+	uiKeyButton.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+	uiKeyButton.BackgroundTransparency = 0.2
+	uiKeyButton.TextColor3 = Color3.new(1, 1, 1)
+	uiKeyButton.Font = Enum.Font.GothamBold
+	uiKeyButton.TextSize = 14
+	uiKeyButton.ZIndex = 101
+	uiKeyButton.Parent = mainFrame
+	roundify(uiKeyButton, 6)
+
+	uiKeyButton.MouseButton1Click:Connect(function()
+		waitingForUIKeyChange = true
+		uiKeyButton.Text = "Press a key..."
+		overlayPrompt.Text = "Press a key for UI toggle"
+		overlayPrompt.Visible = true
+	end)
+end
 
 local overlayPrompt = Instance.new("TextLabel")
 overlayPrompt.Size = UDim2.new(1, 0, 0, 30)
@@ -146,27 +161,22 @@ overlayPrompt.Visible = false
 overlayPrompt.ZIndex = 999
 overlayPrompt.Parent = screenGui
 
-uiKeyButton.MouseButton1Click:Connect(function()
-	waitingForUIKeyChange = true
-	uiKeyButton.Text = "Press a key..."
-	overlayPrompt.Text = "Press a key for UI toggle"
-	overlayPrompt.Visible = true
-end)
-
 local function createRemoteEntry(remote, index)
-	local entry = Instance.new("Frame")
+	local entry = Instance.new("TextButton")
 	entry.Size = UDim2.new(1, -20, 0, 40)
 	entry.Position = UDim2.new(0, 10, 0, 70 + (index - 1) * 45)
 	entry.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 	entry.BackgroundTransparency = 0.2
+	entry.Text = ""
+	entry.AutoButtonColor = false
 	entry.ZIndex = 100
 	entry.Parent = mainFrame
 	roundify(entry, 8)
 
 	local label = Instance.new("TextLabel")
-	label.Size = UDim2.new(0.4, 0, 1, 0)
-	label.Position = UDim2.new(0, 0, 0, 0)
-	label.Text = remote.name .. " - " .. remote.key.Name
+	label.Size = UDim2.new(1, -140, 1, 0)
+	label.Position = UDim2.new(0, 10, 0, 0)
+	label.Text = isMobile and remote.name or (remote.name .. " - " .. remote.key.Name)
 	label.TextColor3 = Color3.new(1, 1, 1)
 	label.BackgroundTransparency = 1
 	label.Font = Enum.Font.Gotham
@@ -175,44 +185,52 @@ local function createRemoteEntry(remote, index)
 	label.ZIndex = 101
 	label.Parent = entry
 
-	local toggle = Instance.new("TextButton")
-	toggle.Size = UDim2.new(0, 60, 0, 25)
-	toggle.Position = UDim2.new(1, -130, 0.5, -12)
-	toggle.Text = remote.enabled and "ON" or "OFF"
-	toggle.BackgroundColor3 = remote.enabled and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(100, 0, 0)
-	toggle.BackgroundTransparency = 0.1
-	toggle.TextColor3 = Color3.new(1, 1, 1)
-	toggle.Font = Enum.Font.GothamBold
-	toggle.TextSize = 14
-	toggle.ZIndex = 101
-	toggle.Parent = entry
-	roundify(toggle, 6)
-
-	toggle.MouseButton1Click:Connect(function()
-		remote.enabled = not remote.enabled
+	if not isMobile then
+		local toggle = Instance.new("TextButton")
+		toggle.Size = UDim2.new(0, 60, 0, 25)
+		toggle.Position = UDim2.new(1, -130, 0.5, -12)
 		toggle.Text = remote.enabled and "ON" or "OFF"
 		toggle.BackgroundColor3 = remote.enabled and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(100, 0, 0)
-	end)
+		toggle.BackgroundTransparency = 0.1
+		toggle.TextColor3 = Color3.new(1, 1, 1)
+		toggle.Font = Enum.Font.GothamBold
+		toggle.TextSize = 14
+		toggle.ZIndex = 101
+		toggle.Parent = entry
+		roundify(toggle, 6)
 
-	local changeBtn = Instance.new("TextButton")
-	changeBtn.Size = UDim2.new(0, 60, 0, 25)
-	changeBtn.Position = UDim2.new(1, -65, 0.5, -12)
-	changeBtn.Text = "Change"
-	changeBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
-	changeBtn.BackgroundTransparency = 0.2
-	changeBtn.TextColor3 = Color3.new(1, 1, 1)
-	changeBtn.Font = Enum.Font.GothamBold
-	changeBtn.TextSize = 14
-	changeBtn.ZIndex = 101
-	changeBtn.Parent = entry
-	roundify(changeBtn, 6)
+		toggle.MouseButton1Click:Connect(function()
+			remote.enabled = not remote.enabled
+			toggle.Text = remote.enabled and "ON" or "OFF"
+			toggle.BackgroundColor3 = remote.enabled and Color3.fromRGB(0, 170, 0) or Color3.fromRGB(100, 0, 0)
+		end)
 
-	changeBtn.MouseButton1Click:Connect(function()
-		waitingForKeybind = index
-		changeBtn.Text = "Press..."
-		overlayPrompt.Text = "Press a key for " .. remote.name
-		overlayPrompt.Visible = true
-		activeChangeButtons[index] = changeBtn
+		local changeBtn = Instance.new("TextButton")
+		changeBtn.Size = UDim2.new(0, 60, 0, 25)
+		changeBtn.Position = UDim2.new(1, -65, 0.5, -12)
+		changeBtn.Text = "Change"
+		changeBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 100)
+		changeBtn.BackgroundTransparency = 0.2
+		changeBtn.TextColor3 = Color3.new(1, 1, 1)
+		changeBtn.Font = Enum.Font.GothamBold
+		changeBtn.TextSize = 14
+		changeBtn.ZIndex = 101
+		changeBtn.Parent = entry
+		roundify(changeBtn, 6)
+
+		changeBtn.MouseButton1Click:Connect(function()
+			waitingForKeybind = index
+			changeBtn.Text = "Press..."
+			overlayPrompt.Text = "Press a key for " .. remote.name
+			overlayPrompt.Visible = true
+			activeChangeButtons[index] = changeBtn
+		end)
+	end
+
+	entry.MouseButton1Click:Connect(function()
+		if isMobile then
+			remote.path:FireServer(unpack(remote.args))
+		end
 	end)
 
 	return label
@@ -224,12 +242,14 @@ for i, remote in ipairs(remotes) do
 end
 
 inputConnection = UserInputService.InputBegan:Connect(function(input, gameProcessed)
-	if gameProcessed then return end
+	if gameProcessed or isMobile then return end
 
 	if waitingForUIKeyChange then
 		openKey = input.KeyCode
-		uiKeyLabel.Text = "UI Toggle Key: " .. openKey.Name
-		uiKeyButton.Text = "Change Key"
+		local label = mainFrame:FindFirstChildWhichIsA("TextLabel")
+		if label then
+			label.Text = "UI Toggle Key: " .. openKey.Name
+		end
 		waitingForUIKeyChange = false
 		overlayPrompt.Visible = false
 		return
@@ -249,9 +269,7 @@ inputConnection = UserInputService.InputBegan:Connect(function(input, gameProces
 
 	if input.KeyCode == openKey then
 		uiVisible = not uiVisible
-		if screenGui then
-			screenGui.Enabled = uiVisible
-		end
+		mainFrame.Visible = uiVisible
 		return
 	end
 
@@ -269,3 +287,25 @@ destroyButton.MouseButton1Click:Connect(function()
 	screenGui:Destroy()
 	remotes = nil
 end)
+
+-- Floating button for mobile UI open/close
+if isMobile then
+	local toggleButton = Instance.new("TextButton")
+	toggleButton.Size = UDim2.new(0, 80, 0, 40)
+	toggleButton.Position = UDim2.new(0, 10, 0, 10)
+	toggleButton.Text = "Menu"
+	toggleButton.BackgroundColor3 = Color3.fromRGB(30, 120, 255)
+	toggleButton.TextColor3 = Color3.new(1, 1, 1)
+	toggleButton.Font = Enum.Font.GothamBold
+	toggleButton.TextSize = 16
+	toggleButton.ZIndex = 999
+	toggleButton.Parent = screenGui
+	toggleButton.Draggable = true
+	toggleButton.Active = true
+	roundify(toggleButton, 8)
+
+	toggleButton.MouseButton1Click:Connect(function()
+		uiVisible = not uiVisible
+		mainFrame.Visible = uiVisible
+	end)
+end
