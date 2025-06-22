@@ -38,7 +38,7 @@ screenGui.DisplayOrder = 1000
 screenGui.Parent = playerGui
 
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = isMobile and UDim2.new(0, 200, 0, 180) or UDim2.new(0, 440, 0, 380)
+mainFrame.Size = isMobile and UDim2.new(0, 200, 0, 200) or UDim2.new(0, 440, 0, 380)
 mainFrame.Position = isMobile and UDim2.new(0, 10, 0, 100) or UDim2.new(0, 100, 0, 100)
 mainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 mainFrame.BackgroundTransparency = 0.2
@@ -62,14 +62,14 @@ title.ZIndex = 101
 title.Parent = mainFrame
 
 local destroyButton = Instance.new("TextButton")
-destroyButton.Size = UDim2.new(0, 100, 0, 30)
-destroyButton.Position = UDim2.new(1, -110, 0, 0)
+destroyButton.Size = isMobile and UDim2.new(0, 70, 0, 25) or UDim2.new(0, 100, 0, 30)
+destroyButton.Position = isMobile and UDim2.new(1, -80, 0, 0) or UDim2.new(1, -110, 0, 0)
 destroyButton.Text = "Delete"
 destroyButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 destroyButton.BackgroundTransparency = 0.1
 destroyButton.TextColor3 = Color3.new(1, 1, 1)
 destroyButton.Font = Enum.Font.GothamBold
-destroyButton.TextSize = isMobile and 14 or 16
+destroyButton.TextSize = isMobile and 12 or 16
 destroyButton.ZIndex = 101
 destroyButton.Parent = mainFrame
 roundify(destroyButton, 6)
