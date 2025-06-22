@@ -4,10 +4,8 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- Detect if player is on mobile
 local isMobile = UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled
 
--- Utility function to add rounded corners
 local function roundify(uiElement, radius)
 	local corner = Instance.new("UICorner")
 	corner.CornerRadius = UDim.new(0, radius or 8)
@@ -67,7 +65,6 @@ local inputConnection
 local labelRefs = {}
 local activeChangeButtons = {}
 
--- UI Setup
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "RemoteControlUI"
 screenGui.ResetOnSpawn = false
@@ -77,8 +74,8 @@ screenGui.DisplayOrder = 1000
 screenGui.Parent = playerGui
 
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 440, 0, 380)
-mainFrame.Position = UDim2.new(0, 100, 0, 100)
+mainFrame.Size = isMobile and UDim2.new(0, 200, 0, 320) or UDim2.new(0, 440, 0, 380)
+mainFrame.Position = isMobile and UDim2.new(0, 10, 0, 100) or UDim2.new(0, 100, 0, 100)
 mainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 mainFrame.BackgroundTransparency = 0.2
 mainFrame.BorderSizePixel = 0
@@ -95,7 +92,7 @@ title.BackgroundTransparency = 1
 title.Text = "Rake47"
 title.TextColor3 = Color3.new(1, 1, 1)
 title.Font = Enum.Font.GothamBold
-title.TextSize = 22
+title.TextSize = isMobile and 18 or 22
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.ZIndex = 101
 title.Parent = mainFrame
@@ -108,12 +105,11 @@ destroyButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 destroyButton.BackgroundTransparency = 0.1
 destroyButton.TextColor3 = Color3.new(1, 1, 1)
 destroyButton.Font = Enum.Font.GothamBold
-destroyButton.TextSize = 16
+destroyButton.TextSize = isMobile and 14 or 16
 destroyButton.ZIndex = 101
 destroyButton.Parent = mainFrame
 roundify(destroyButton, 6)
 
--- Only show key toggle UI on PC
 if not isMobile then
 	local uiKeyLabel = Instance.new("TextLabel")
 	uiKeyLabel.Size = UDim2.new(0, 200, 0, 25)
@@ -162,9 +158,12 @@ overlayPrompt.ZIndex = 999
 overlayPrompt.Parent = screenGui
 
 local function createRemoteEntry(remote, index)
+	local entryHeight = isMobile and 30 or 40
+	local ySpacing = isMobile and 35 or 45
+
 	local entry = Instance.new("TextButton")
-	entry.Size = UDim2.new(1, -20, 0, 40)
-	entry.Position = UDim2.new(0, 10, 0, 70 + (index - 1) * 45)
+	entry.Size = UDim2.new(1, -20, 0, entryHeight)
+	entry.Position = UDim2.new(0, 10, 0, (isMobile and 50 or 70) + (index - 1) * ySpacing)
 	entry.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
 	entry.BackgroundTransparency = 0.2
 	entry.Text = ""
@@ -180,7 +179,7 @@ local function createRemoteEntry(remote, index)
 	label.TextColor3 = Color3.new(1, 1, 1)
 	label.BackgroundTransparency = 1
 	label.Font = Enum.Font.Gotham
-	label.TextSize = 15
+	label.TextSize = isMobile and 13 or 15
 	label.TextXAlignment = Enum.TextXAlignment.Left
 	label.ZIndex = 101
 	label.Parent = entry
@@ -288,7 +287,6 @@ destroyButton.MouseButton1Click:Connect(function()
 	remotes = nil
 end)
 
--- Floating button for mobile UI open/close
 if isMobile then
 	local toggleButton = Instance.new("TextButton")
 	toggleButton.Size = UDim2.new(0, 80, 0, 40)
